@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:title="Home"
+            android:icon="@drawable/ic_baseline_home_24" />
+        <item
+            android:id="@+id/completedtask"
+            android:title="Completed Task"
+            android:icon="@drawable/ic_baseline_checklist_24"/>
+    </group>
+    <item
+        android:title="Profile">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:title="About"
+                    android:id="@+id/about"
+                    android:icon="@drawable/baseline_account_circle_24"
+                    />
+                <item android:title="Log In"
+                    android:id="@+id/login"/>
+                <item android:title="Sign Out"
+                    android:id="@+id/signout"/>
+            </group>
+        </menu>
+    </item>
+    <group android:checkableBehavior="single">
+    </group>
+
+</menu>
