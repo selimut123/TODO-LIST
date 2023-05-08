@@ -2,17 +2,23 @@ package edu.sjsu.android.finalproject;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class IndividualItem {
+    private final String AUTHORITY = "edu.sjsu.android.finalproject";
+    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/TODO");
     public void showDialog(int position, Context context) {
         //Alert
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -23,7 +29,7 @@ public class IndividualItem {
         /* TODO :
               Save name into Database
           */
-        ((TextView)popup.findViewById(R.id.in_name)).setText("Item " + position);
+        ((TextView)popup.findViewById(R.id.in_name)).setText("");
 
         // Set Date
         /* TODO :
@@ -57,7 +63,20 @@ public class IndividualItem {
         // Misc
         builder.setView(popup);
         builder.setPositiveButton("Save", (dialog, id) -> {
+            ContentValues val = new ContentValues();
+            val.put("name", ((TextView)popup.findViewById(R.id.in_name)).getText().toString());
+            val.put("date", inDate.getText().toString());
+            ArrayList<String> cat = new ArrayList<>();
+            for(ItemState s : listItems){
+                if(s.isSelected()){
+                    cat.add(s.getCategory());
+                }
+            }
+
+            TodoDB.cat = cat;
             // update Database
+            if (context.getContentResolver().insert(CONTENT_URI, val) != null)
+                Toast.makeText(context, "Task Added", Toast.LENGTH_SHORT).show();
         });
         builder.setNegativeButton("Cancel", (dialog, id) -> {
             // When user selects no, do nothing

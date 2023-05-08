@@ -12,10 +12,10 @@ import java.util.List;
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
 
-    private final List<String> tasks;
+    private final List<TodoItem> tasks;
     ItemListFragment itemListFragment;
 
-    public ItemListAdapter(List<String> tasks, ItemListFragment itemListFragment) {
+    public ItemListAdapter(List<TodoItem> tasks, ItemListFragment itemListFragment) {
         this.tasks = tasks;
         this.itemListFragment = itemListFragment;
     }
@@ -33,9 +33,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         /* TODO :
             get this data from database
          */
-        String item = tasks.get(position);
-        holder.task.setText(item);
-        holder.date.setText("April" + position);
+        TodoItem item = tasks.get(position);
+        holder.task.setText(item.getName());
+        holder.date.setText(item.getDate());
     }
 
     @Override

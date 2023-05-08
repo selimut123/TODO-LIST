@@ -11,6 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
+        <provider
+            android:name=".TodoProvider"
+            android:authorities="edu.sjsu.android.finalproject"
+            android:enabled="true"
+            android:exported="true"></provider>
         <activity
             android:name=".MainActivity"
             android:exported="true">

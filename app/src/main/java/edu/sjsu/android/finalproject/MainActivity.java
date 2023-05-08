@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
 
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         if (getContentResolver().insert(CONTENT_URI, values) != null)
             Toast.makeText(this, "Student Added", Toast.LENGTH_SHORT).show();
     }
+
 
     public void getAllStudents(View view){
         try(Cursor c = getContentResolver().query(CONTENT_URI, null, null, null, "name")){

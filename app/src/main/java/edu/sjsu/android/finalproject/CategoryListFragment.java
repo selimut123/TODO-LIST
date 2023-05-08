@@ -1,12 +1,18 @@
 package edu.sjsu.android.finalproject;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -14,11 +20,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 
 public class CategoryListFragment extends Fragment {
     ArrayList<String> categories = new ArrayList<>();
+    private final String AUTHORITY = "edu.sjsu.android.finalproject";
+    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -39,8 +49,12 @@ public class CategoryListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category_list, container, false);
 
-        if(view instanceof LinearLayout){
+        if(view instanceof RelativeLayout){
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.categoryList);
+
+            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.add_category);
+            fab.setOnClickListener(this::openDialog);
+
             recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
             CategoryListAdapter adapter = new CategoryListAdapter(categories, CategoryListFragment.this);
             recyclerView.setAdapter(adapter);
@@ -53,5 +67,30 @@ public class CategoryListFragment extends Fragment {
         Log.d("CategoryListFragment", "TOUCHED");
         NavController controller = NavHostFragment.findNavController(this);
         controller.navigate(R.id.action_categoryListFragment_to_itemListFragment);
+    }
+
+    public void openDialog(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View popup = inflater.inflate(R.layout.category_popup, null);
+
+        // Set Name
+        /* TODO :
+              Save name into Database
+          */
+        ((TextView)popup.findViewById(R.id.in_category)).setText("");
+
+        builder.setView(popup);
+        builder.setPositiveButton("Save", (dialog, id) -> {
+
+            ContentValues val = new ContentValues();
+            val.put("category", ((TextView)popup.findViewById(R.id.in_category)).getText().toString());
+            if (getContext().getContentResolver().insert(CONTENT_URI, val) != null)
+                Toast.makeText(getContext(), "Category Added", Toast.LENGTH_SHORT).show();
+        });
+        builder.setNegativeButton("Cancel", (dialog, id) -> {
+            // When user selects no, do nothing
+        });
+        builder.create().show();
     }
 }
