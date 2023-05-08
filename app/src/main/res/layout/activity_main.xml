@@ -23,7 +23,7 @@
             tools:context=".MainActivity" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_category"
+            android:id="@+id/add_FAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"

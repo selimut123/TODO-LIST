@@ -81,7 +81,7 @@ public class IndividualItem {
         dpDialog.show();
     }
 
-    public class ItemState {
+    public static class ItemState {
         private String category;
         private boolean selected;
 

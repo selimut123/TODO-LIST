@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/md_margin">
+
+    <TextView
+        android:id="@+id/cat_add_modal_cat_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sm_margin"
+        android:text="Name"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sm_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/cat_add_modal_cat_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="ex: work"
+        android:inputType="text"
+        android:textSize="@dimen/sm_text"
+        app:layout_constraintBottom_toBottomOf="@+id/cat_add_modal_cat_name_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cat_add_modal_cat_name_text" />
+</androidx.constraintlayout.widget.ConstraintLayout>
