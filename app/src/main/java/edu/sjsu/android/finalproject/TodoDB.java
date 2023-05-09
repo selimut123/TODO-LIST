@@ -99,6 +99,16 @@ public class TodoDB extends SQLiteOpenHelper {
         return database.rawQuery("SELECT COUNT(Todo_id) AS len FROM Todocategory WHERE Todocategory.category_id == " + cat_id.trim() + ";", null);
     }
 
+    public int updateTodo(ContentValues val, String todo_id){
+        SQLiteDatabase database = getWritableDatabase();
+        return database.update(TABLE_NAME, val,"_id == " + todo_id.trim(),null);
+    }
+
+    public int updateCat(ContentValues val, String cat_id){
+        SQLiteDatabase database = getWritableDatabase();
+        return database.update(TABLE_NAME2, val,"_id == " + cat_id.trim(),null);
+    }
+
 //    public Cursor getTodo(){
 //        SQLiteDatabase db = getWritableDatabase();
 //        return db.rawQuery("SELECT * FROM Todo JOIN Todocategory ON Todo.id == Todocategory.id ORDER BY Todo.id", null);

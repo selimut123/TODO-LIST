@@ -38,12 +38,14 @@ public class ItemListFragment extends Fragment {
         try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
             if(c.moveToFirst()){
                 do{
+                    int id = c.getColumnIndex("_id");
                     int nameid = c.getColumnIndex("name");
                     int dateid = c.getColumnIndex("date");
                     String name = c.getString(nameid);
                     String date = c.getString(dateid);
+                    String todo_id = c.getString(id);
 
-                    tasks.add(new TodoItem(name, date));
+                    tasks.add(new TodoItem(todo_id, name, date));
                 }while(c.moveToNext());
             }
         }
@@ -68,6 +70,6 @@ public class ItemListFragment extends Fragment {
 
     public void onClick(int position) {
         Log.d("ItemListFragment", "TOUCHED");
-        new IndividualItem().showDialog(position, getContext());
+        new IndividualItem().showDialog(position, getContext(), tasks, this);
     }
 }

@@ -5,13 +5,14 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,17 +20,18 @@ import java.util.Calendar;
 public class IndividualItem {
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/TODO");
-    public void showDialog(int position, Context context) {
+    public void showDialog(int position, Context context, ArrayList<TodoItem> tasks, ItemListFragment itemListFragment) {
         //Alert
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View popup = inflater.inflate(R.layout.item_edit_popup, null);
 
+        TodoItem task = tasks.get(position);
         // Set Name
         /* TODO :
               Save name into Database
           */
-        ((TextView)popup.findViewById(R.id.in_name)).setText("");
+        ((TextView)popup.findViewById(R.id.in_name)).setText(task.getName());
 
         // Set Date
         /* TODO :
@@ -37,6 +39,7 @@ public class IndividualItem {
               Save date into Database
           */
         TextView inDate = ((TextView)popup.findViewById(R.id.in_date));
+        inDate.setText(task.getDate());
         inDate.setOnClickListener(v -> changeDate(context, inDate));
 
         // Set Category
@@ -44,21 +47,21 @@ public class IndividualItem {
               Replace temporary with Database
               Save categories into Database
           */
-        String[] tempCategories = {
-                "Select Category",
-                "Category1", "Category2", "Category3", "Category4", "Category5",
-                "Category6", "Category7", "Category8", "Category9", "Category10",
-        };
-        ArrayList<ItemState> listItems = new ArrayList<>();
-        for (String s:tempCategories) {
-            ItemState iS = new ItemState();
-            iS.setCategory(s);
-            iS.setSelected(false);
-            listItems.add(iS);
-        }
-        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
-        Spinner spinner = (Spinner)popup.findViewById(R.id.in_category);
-        spinner.setAdapter(individualItemAdapter);
+//        String[] tempCategories = {
+//                "Select Category",
+//                "Category1", "Category2", "Category3", "Category4", "Category5",
+//                "Category6", "Category7", "Category8", "Category9", "Category10",
+//        };
+//        ArrayList<ItemState> listItems = new ArrayList<>();
+//        for (String s:tempCategories) {
+//            ItemState iS = new ItemState();
+//            iS.setCategory(s);
+//            iS.setSelected(false);
+//            listItems.add(iS);
+//        }
+//        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
+//        Spinner spinner = (Spinner)popup.findViewById(R.id.in_category);
+//        spinner.setAdapter(individualItemAdapter);
 
         // Misc
         builder.setView(popup);
@@ -66,17 +69,15 @@ public class IndividualItem {
             ContentValues val = new ContentValues();
             val.put("name", ((TextView)popup.findViewById(R.id.in_name)).getText().toString());
             val.put("date", inDate.getText().toString());
-            ArrayList<String> cat = new ArrayList<>();
-            for(ItemState s : listItems){
-                if(s.isSelected()){
-                    cat.add(s.getCategory());
-                }
-            }
 
-            TodoDB.cat = cat;
-            // update Database
-            if (context.getContentResolver().insert(CONTENT_URI, val) != null)
-                Toast.makeText(context, "Task Added", Toast.LENGTH_SHORT).show();
+            if (context.getContentResolver().update(CONTENT_URI, val, task.getId(), null) > 0){
+                Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
+                itemListFragment.getActivity().finish();
+
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+                itemListFragment.getActivity().startActivity(itemListFragment.getActivity().getIntent());
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+            }
         });
         builder.setNegativeButton("Cancel", (dialog, id) -> {
             // When user selects no, do nothing

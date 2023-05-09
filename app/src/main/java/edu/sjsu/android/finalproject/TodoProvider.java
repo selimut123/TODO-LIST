@@ -60,13 +60,6 @@ public class TodoProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-//        long inserted = db.insert(values);
-//        if(inserted > 0){
-//            Uri _uri = ContentUris.withAppendedId(uri, inserted);
-//            getContext().getContentResolver().notifyChange(_uri,null);
-//            return _uri;
-//        }
-//        throw new SQLException("Failed to add a record into" + uri);
         Uri _uri = null;
         switch (uriMatcher.match(uri)){
             case TODO:
@@ -99,7 +92,13 @@ public class TodoProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        switch (uriMatcher.match(uri)){
+            case TODO:
+                return db.updateTodo(values, selection);
+            case CATEGORY:
+                return db.updateCat(values, selection);
+            default: throw new SQLException("Failed to update a record into " + uri);
+        }
     }
 
     @Override

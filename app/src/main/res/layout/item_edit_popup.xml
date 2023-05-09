@@ -33,19 +33,19 @@
         android:textSize="20sp"
         android:hint="Choose Date"/>
 
-    <TextView
-        android:id="@+id/category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Event Category" />
+<!--    <TextView-->
+<!--        android:id="@+id/category"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="30sp"-->
+<!--        android:text="Event Category" />-->
 
-    <Spinner
-        android:id="@+id/in_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:autofillHints="Select :"
-        android:drawableRight="@android:drawable/arrow_down_float"/>
+<!--    <Spinner-->
+<!--        android:id="@+id/in_category"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="20sp"-->
+<!--        android:autofillHints="Select :"-->
+<!--        android:drawableRight="@android:drawable/arrow_down_float"/>-->
 
 </LinearLayout>

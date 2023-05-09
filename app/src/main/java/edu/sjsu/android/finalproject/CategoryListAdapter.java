@@ -53,6 +53,10 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
             binding.setOnClickListener(v ->   {
                 categoryListFragment.onClick(this.getAdapterPosition());
             });
+            binding.setOnLongClickListener(v -> {
+                categoryListFragment.onHold(this.getAdapterPosition());
+                return true;
+            });
         }
     }
 }

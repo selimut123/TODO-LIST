@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav"
+            android:tag="testing"
             tools:context=".MainActivity" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -10,9 +10,12 @@ public class TodoItem{
     private final String name;
     private final String date;
 
-    public TodoItem(String name, String date) {
+    private final String id;
+
+    public TodoItem(String id, String name, String date) {
         this.name = name;
         this.date = date;
+        this.id = id;
     }
 
     public String getDate() {
@@ -22,5 +25,7 @@ public class TodoItem{
     public String getName() {
         return name;
     }
+
+    public String getId(){return id;}
 
 }

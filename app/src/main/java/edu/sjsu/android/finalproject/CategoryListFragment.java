@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -116,4 +118,57 @@ public class CategoryListFragment extends Fragment {
 //        });
 //        builder.create().show();
 //    }
+
+    public void onHold(int position) {
+        Log.d("CategoryListFragment", "HOLD");
+        showEditDialog(position);
+        //Toast.makeText(getContext(), "Long Hold", Toast.LENGTH_SHORT).show();
+    }
+
+    public void showEditDialog(int position) {
+        // Alert
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View popup = inflater.inflate(R.layout.category_edit_popup, null);
+        CategoryItem category = categories.get(position);
+        // Set Image
+        /* TODO : Get image from Database and External Storage ;
+                  Remove images from storage when no categories use them */
+        ImageView iView = (ImageView)popup.findViewById(R.id.category_image);
+        iView.setImageResource(R.mipmap.ic_launcher_round);
+        iView.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Changing Image", Toast.LENGTH_SHORT).show();
+        });
+
+        // Set Category
+        // TODO : Get Category name from Database or onClick
+        ((EditText)popup.findViewById(R.id.category_name)).setText(category.getName());
+
+        // Buttons
+        builder.setNeutralButton("Delete", (dialog, id) -> {
+            // TODO : Ask for confirmation ; remove from database
+        });
+        builder.setNegativeButton("Cancel", (dialog, id) -> {
+            // When user selects, do nothing
+        });
+        builder.setPositiveButton("Save", (dialog, id) -> {
+            // TODO : Save image and new name into database : Update everywhere
+            ContentValues val = new ContentValues();
+            val.put("category", ((TextView)popup.findViewById(R.id.category_name)).getText().toString());
+
+            if (getContext().getContentResolver().update(CONTENT_URI, val, category.getId(), null) > 0){
+                Toast.makeText(getContext(), "Category Updated", Toast.LENGTH_SHORT).show();
+                this.getActivity().finish();
+
+                this.getActivity().overridePendingTransition(0,0);
+                this.getActivity().startActivity(this.getActivity().getIntent());
+                this.getActivity().overridePendingTransition(0,0);
+            }
+
+        });
+
+        // Misc
+        builder.setView(popup);
+        builder.create().show();
+    }
 }
