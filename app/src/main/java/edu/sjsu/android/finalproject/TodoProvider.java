@@ -23,6 +23,8 @@ public class TodoProvider extends ContentProvider {
     private static final int TODO_ID = 2;
     private static final int CATEGORY = 3;
     private static final int CATEGORY_ID = 4;
+    private static final int TODOLEN = 5;
+    private static final int TODOLEN_ID = 6;
     private static final UriMatcher uriMatcher;
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -30,6 +32,8 @@ public class TodoProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "TODO/#",TODO_ID);
         uriMatcher.addURI(AUTHORITY, "CATEGORY", CATEGORY);
         uriMatcher.addURI(AUTHORITY, "CATEGORY/#", CATEGORY_ID);
+        uriMatcher.addURI(AUTHORITY, "TODOLEN", TODOLEN);
+        uriMatcher.addURI(AUTHORITY, "TODOLEN/#", TODOLEN_ID);
     }
 
     @Override
@@ -48,6 +52,8 @@ public class TodoProvider extends ContentProvider {
                 return db.getAllTodo(sortOrder, selection);
             case CATEGORY:
                 return db.getAllCat(sortOrder);
+            case TODOLEN:
+                return db.getTodoLength(selection);
             default: throw new SQLException("Failed to add a record into " + uri);
         }
     }

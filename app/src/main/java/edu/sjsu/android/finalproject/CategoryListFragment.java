@@ -27,10 +27,10 @@ import java.util.ArrayList;
 
 
 public class CategoryListFragment extends Fragment {
-    ArrayList<String> categories = new ArrayList<>();
-    ArrayList<String> cat_id = new ArrayList<>();
+    ArrayList<CategoryItem> categories = new ArrayList<>();
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
+    private final Uri CONTENT_URI2 = Uri.parse("content://" + AUTHORITY + "/TODOLEN");
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -52,11 +52,19 @@ public class CategoryListFragment extends Fragment {
                     int catid = c.getColumnIndex("_id");
                     String cat = c.getString(catid);
 
-                    categories.add(name);
-                    cat_id.add(cat);
+                    String len = "0";
+                    try(Cursor c2 = getContext().getContentResolver().query(CONTENT_URI2, null, cat, null, null)) {
+                        if (c2.moveToFirst()) {
+                            int lenid = c2.getColumnIndex("len");
+                            len = c2.getString(lenid);
+                        }
+                    }
+
+                    categories.add(new CategoryItem(cat, name, len));
                 }while(c.moveToNext());
             }
         }
+//        Log.d("testing", String.valueOf(categories.size()));
 //        for (int i=0; i<25; i++) { categories.add("Category " + i); }
     }
 
@@ -79,32 +87,33 @@ public class CategoryListFragment extends Fragment {
         Log.d("CategoryListFragment", "TOUCHED");
         NavController controller = NavHostFragment.findNavController(this);
         Bundle bundle = new Bundle();
-        bundle.putString("categoryID", cat_id.get(position));
+        CategoryItem item = categories.get(position);
+        bundle.putString("categoryID", item.getId());
         controller.navigate(R.id.action_categoryListFragment_to_itemListFragment, bundle);
     }
 
-    public void openDialog(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View popup = inflater.inflate(R.layout.category_popup, null);
-
-        // Set Name
-        /* TODO :
-              Save name into Database
-          */
-        ((TextView)popup.findViewById(R.id.in_category)).setText("");
-
-        builder.setView(popup);
-        builder.setPositiveButton("Save", (dialog, id) -> {
-
-            ContentValues val = new ContentValues();
-            val.put("category", ((TextView)popup.findViewById(R.id.in_category)).getText().toString());
-            if (getContext().getContentResolver().insert(CONTENT_URI, val) != null)
-                Toast.makeText(getContext(), "Category Added", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNegativeButton("Cancel", (dialog, id) -> {
-            // When user selects no, do nothing
-        });
-        builder.create().show();
-    }
+//    public void openDialog(View view){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+//        final View popup = inflater.inflate(R.layout.category_popup, null);
+//
+//        // Set Name
+//        /* TODO :
+//              Save name into Database
+//          */
+//        ((TextView)popup.findViewById(R.id.in_category)).setText("");
+//
+//        builder.setView(popup);
+//        builder.setPositiveButton("Save", (dialog, id) -> {
+//
+//            ContentValues val = new ContentValues();
+//            val.put("category", ((TextView)popup.findViewById(R.id.in_category)).getText().toString());
+//            if (getContext().getContentResolver().insert(CONTENT_URI, val) != null)
+//                Toast.makeText(getContext(), "Category Added", Toast.LENGTH_SHORT).show();
+//        });
+//        builder.setNegativeButton("Cancel", (dialog, id) -> {
+//            // When user selects no, do nothing
+//        });
+//        builder.create().show();
+//    }
 }

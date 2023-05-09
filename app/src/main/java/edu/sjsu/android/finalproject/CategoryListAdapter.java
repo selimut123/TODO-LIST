@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapter.ViewHolder> {
-    private final List<String> categories;
+    private final List<CategoryItem> categories;
     CategoryListFragment categoryListFragment;
 
-    public CategoryListAdapter(List<String> categories, CategoryListFragment categoryListFragment) {
+    public CategoryListAdapter(List<CategoryItem> categories, CategoryListFragment categoryListFragment) {
         this.categories = categories;
         this.categoryListFragment = categoryListFragment;
     }
@@ -29,10 +29,10 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // TODO : get this data from database
-        String item = categories.get(position);
+        CategoryItem item = categories.get(position);
         holder.image.setImageResource(R.mipmap.ic_launcher);
-        holder.name.setText(item);
-        holder.tasks.setText(position + " tasks");
+        holder.name.setText(item.getName());
+        holder.tasks.setText(item.getLength() + " tasks");
     }
 
     @Override

@@ -94,6 +94,11 @@ public class TodoDB extends SQLiteOpenHelper {
         return database.query(TABLE_NAME2, new String[]{ID, CATEGORY}, null, null, null, null, sortOrder);
     }
 
+    public Cursor getTodoLength(String cat_id){
+        SQLiteDatabase database = getWritableDatabase();
+        return database.rawQuery("SELECT COUNT(Todo_id) AS len FROM Todocategory WHERE Todocategory.category_id == " + cat_id.trim() + ";", null);
+    }
+
 //    public Cursor getTodo(){
 //        SQLiteDatabase db = getWritableDatabase();
 //        return db.rawQuery("SELECT * FROM Todo JOIN Todocategory ON Todo.id == Todocategory.id ORDER BY Todo.id", null);

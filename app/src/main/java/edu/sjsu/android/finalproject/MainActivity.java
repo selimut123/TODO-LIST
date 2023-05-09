@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     public void addToDo(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -175,43 +180,6 @@ public class MainActivity extends AppCompatActivity {
 //        };
 //        for (String s:tempCategories) {
 //        }
-        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
-        spinner.setAdapter(individualItemAdapter);
-        Context cont = this;
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                String selectedItem = ((IndividualItem.ItemState)parent.getItemAtPosition(position)).getCategory();
-                Log.d("TAG", "onItemSelected: " + selectedItem);
-                if(selectedItem.equals(getString(R.string.add_new_category)))
-                {
-//                    Log.d("TAG", "getCustomView: new feature");
-                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(popup.getContext());
-                    LayoutInflater inflater = (LayoutInflater) popup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View add_cat_popup = inflater.inflate(R.layout.category_add_popup, null);
-                    builder.setTitle("Add a new category");
-                    builder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
-
-                    }));
-                    builder.setPositiveButton("Add", (dialogInterface, i) ->{
-                        //todo: add new category to db and to the spinner
-                        String new_cat_name = ((EditText)add_cat_popup.findViewById(R.id.cat_add_modal_cat_name)).getText().toString();
-                        ContentValues val = new ContentValues();
-                        val.put("category", new_cat_name);
-
-                        if (getContentResolver().insert(CONTENT_URI_CAT, val) != null)
-                            Toast.makeText(cont, "Category Added", Toast.LENGTH_SHORT).show();
-//                        Log.d("TAG", "addCategory: "+ new_cat_name);
-                    });
-                    builder.setView(add_cat_popup);
-                    builder.create().show();
-                }
-            }
-            public void onNothingSelected(AdapterView<?> parent){
-            }
-        });
-
-
         builder.setTitle(R.string.add_popup_title);
         builder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
             newDate = null;
@@ -241,13 +209,63 @@ public class MainActivity extends AppCompatActivity {
 
             TodoDB.cat = selected_cats;
             // update Database
-            if (getContentResolver().insert(CONTENT_URI_TODO, val) != null)
+            if (getContentResolver().insert(CONTENT_URI_TODO, val) != null){
                 Toast.makeText(this, "Task Added", Toast.LENGTH_SHORT).show();
+                finish();
+                overridePendingTransition(0,0);
+                startActivity(getIntent());
+                overridePendingTransition(0,0);
+            }
 
 //            Log.d("TAG", "addItem: \n\tname: "+ new_item_name + "\n\tdate: " + newDate.toString() + "\n\tcategories: " + String.join(" ", selected_cats));
         });
         builder.setView(popup);
-        builder.create().show();
+        AlertDialog alert = builder.create();
+
+        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
+        spinner.setAdapter(individualItemAdapter);
+        Context cont = this;
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                String selectedItem = ((IndividualItem.ItemState)parent.getItemAtPosition(position)).getCategory();
+                Log.d("TAG", "onItemSelected: " + selectedItem);
+                if(selectedItem.equals(getString(R.string.add_new_category)))
+                {
+//                    Log.d("TAG", "getCustomView: new feature");
+                    android.app.AlertDialog.Builder builder2 = new android.app.AlertDialog.Builder(popup.getContext());
+                    LayoutInflater inflater = (LayoutInflater) popup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    final View add_cat_popup = inflater.inflate(R.layout.category_add_popup, null);
+                    builder2.setTitle("Add a new category");
+                    builder2.setNegativeButton("Cancel", ((dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                    }));
+                    builder2.setPositiveButton("Add", (dialogInterface, i) ->{
+                        //todo: add new category to db and to the spinner
+                        String new_cat_name = ((EditText)add_cat_popup.findViewById(R.id.cat_add_modal_cat_name)).getText().toString();
+                        ContentValues val = new ContentValues();
+                        val.put("category", new_cat_name);
+
+                        if (getContentResolver().insert(CONTENT_URI_CAT, val) != null){
+                            Toast.makeText(cont, "Category Added", Toast.LENGTH_SHORT).show();
+                            alert.dismiss();
+                            finish();
+                            overridePendingTransition(0,0);
+                            startActivity(getIntent());
+                            overridePendingTransition(0,0);
+                        }
+//                        Log.d("TAG", "addCategory: "+ new_cat_name);
+                    });
+                    builder2.setView(add_cat_popup);
+                    builder2.create().show();
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent){
+            }
+        });
+
+
+        alert.show();
     }
 
 
