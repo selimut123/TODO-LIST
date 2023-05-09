@@ -1,12 +1,15 @@
 package edu.sjsu.android.finalproject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class IndividualItemAdapter extends ArrayAdapter<IndividualItem.ItemState
         if (convertView == null) {
             LayoutInflater layoutInflator = LayoutInflater.from(mContext);
             convertView = layoutInflator.inflate(R.layout.category_selection, null);
+
             holder = new ViewHolder();
             holder.mCheckBox = (CheckBox) convertView.findViewById(R.id.checkbox);
             holder.mTextView = (TextView) convertView.findViewById(R.id.category);
@@ -56,6 +60,9 @@ public class IndividualItemAdapter extends ArrayAdapter<IndividualItem.ItemState
         isFromView = false;
 
         if (position == 0) {
+            holder.mCheckBox.setVisibility(View.INVISIBLE);
+        } else if (position == this.listState.size() - 1) {
+            // add a new category
             holder.mCheckBox.setVisibility(View.INVISIBLE);
         } else {
             holder.mCheckBox.setVisibility(View.VISIBLE);

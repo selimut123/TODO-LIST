@@ -100,9 +100,18 @@ public class IndividualItem {
         dpDialog.show();
     }
 
-    public class ItemState {
+    public static class ItemState {
+        private String id;
         private String category;
         private boolean selected;
+
+        public void setId(String id){
+            this.id = id;
+        }
+
+        public String getId(){
+            return this.id;
+        }
 
         public String getCategory() { return category; }
         public void setCategory(String category) { this.category = category; }

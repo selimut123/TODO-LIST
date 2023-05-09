@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class TodoDB extends SQLiteOpenHelper {
     static String TABLE_NAME = "Todo";
@@ -40,12 +42,13 @@ public class TodoDB extends SQLiteOpenHelper {
                         + "%s STRING NOT NULL);",
                 TABLE_NAME, ID, NAME, DATE);
 
-        String command2 = "CREATE TABLE Todocategory(todo_id int NOT NULL, category varchar(50) NOT NULL, FOREIGN KEY(todo_id) REFERENCES Todo(todo_id));";
 
-        String command3 = String.format("CREATE TABLE %s ("
+        String command2 = String.format("CREATE TABLE %s ("
                         + "%s INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + "%s STRING NOT NULL);",
                 TABLE_NAME2, ID2, CATEGORY);
+
+        String command3 = "CREATE TABLE Todocategory(todo_id int NOT NULL, category_id int NOT NULL, FOREIGN KEY(todo_id) REFERENCES Todo(todo_id), FOREIGN KEY(category_id) REFERENCES Category(category_id));";
 
         sq.execSQL(command);
         sq.execSQL(command2);
@@ -65,10 +68,10 @@ public class TodoDB extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         long inserted = db.insert(TABLE_NAME, null, values);
 
-        for(String cat : cat){
+        for(String cat_id : cat){
             ContentValues val = new ContentValues();
             val.put("todo_id", inserted);
-            val.put("category", cat);
+            val.put("category_id", Integer.valueOf(cat_id));
             db.insert("Todocategory",null, val);
         }
         return inserted;
@@ -79,16 +82,22 @@ public class TodoDB extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME2, null, values);
     }
 
-    public Cursor getAllTodo(String sortOrder){
+    public Cursor getAllTodo(String sortOrder, String cat_id){
         SQLiteDatabase database = getWritableDatabase();
 
-        return database.query(TABLE_NAME, new String[]{ID, NAME, DATE}, null, null, null, null, sortOrder);
+        return database.rawQuery("SELECT DISTINCT Todo._id, Todo.name, Todo.date FROM Category JOIN Todocategory ON Category._id == Todocategory.category_id JOIN Todo ON Todocategory.todo_id == Todo._id WHERE Category._id == " + cat_id.trim() + ";", null);
+//        return database.query(TABLE_NAME, new String[]{ID, NAME, DATE}, null, null, null, null, sortOrder);
     }
 
-    public Cursor getTodo(){
-        SQLiteDatabase db = getWritableDatabase();
-        return db.rawQuery("SELECT * FROM Todo JOIN Todocategory ON Todo.id == Todocategory.id ORDER BY Todo.id", null);
+    public Cursor getAllCat(String sortOrder){
+        SQLiteDatabase database = getWritableDatabase();
+        return database.query(TABLE_NAME2, new String[]{ID, CATEGORY}, null, null, null, null, sortOrder);
     }
+
+//    public Cursor getTodo(){
+//        SQLiteDatabase db = getWritableDatabase();
+//        return db.rawQuery("SELECT * FROM Todo JOIN Todocategory ON Todo.id == Todocategory.id ORDER BY Todo.id", null);
+//    }
 
 //    public int deleteAll(){
 //        SQLiteDatabase db = getWritableDatabase();

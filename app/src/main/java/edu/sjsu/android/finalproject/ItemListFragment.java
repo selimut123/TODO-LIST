@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class ItemListFragment extends Fragment {
     ArrayList<TodoItem> tasks = new ArrayList<>();
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
-    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/TODO");
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -35,9 +35,8 @@ public class ItemListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // TODO : Get tasks from database
         tasks = new ArrayList<>();
-        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, null, null, null)){
+        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
             if(c.moveToFirst()){
-                String result = "Bryan Christiano's Gradebook: \n";
                 do{
                     int nameid = c.getColumnIndex("name");
                     int dateid = c.getColumnIndex("date");
@@ -48,6 +47,8 @@ public class ItemListFragment extends Fragment {
                 }while(c.moveToNext());
             }
         }
+        assert getArguments() != null;
+        Log.d("testing1", "" + getArguments().getString("categoryID"));
     }
 
     @Override
@@ -58,10 +59,6 @@ public class ItemListFragment extends Fragment {
         // Set the adapter
         if (view instanceof RelativeLayout) {
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.itemList);
-
-            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.add_todo);
-            fab.setOnClickListener(this::openDialog);
-
             recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
             ItemListAdapter adapter = new ItemListAdapter(tasks, ItemListFragment.this);
             recyclerView.setAdapter(adapter);
@@ -72,10 +69,5 @@ public class ItemListFragment extends Fragment {
     public void onClick(int position) {
         Log.d("ItemListFragment", "TOUCHED");
         new IndividualItem().showDialog(position, getContext());
-    }
-
-    public void openDialog(View view){
-        Log.d("opendrawer", "TOUCHED");
-        new IndividualItem().showDialog(0, getContext());
     }
 }

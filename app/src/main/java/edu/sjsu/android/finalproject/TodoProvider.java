@@ -43,7 +43,13 @@ public class TodoProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         // TODO: Implement this to handle query requests from clients.
         sortOrder = sortOrder == null ? "_id" : sortOrder;
-        return db.getAllTodo(sortOrder);
+        switch (uriMatcher.match(uri)){
+            case TODO:
+                return db.getAllTodo(sortOrder, selection);
+            case CATEGORY:
+                return db.getAllCat(sortOrder);
+            default: throw new SQLException("Failed to add a record into " + uri);
+        }
     }
 
     @Override

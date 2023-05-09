@@ -16,15 +16,15 @@
         tools:context=".CategoryListFragment"
         tools:listitem="@layout/category_row" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/baseline_add_24"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        app:borderWidth="2dp"
-        android:layout_margin="25dp"
-        android:contentDescription="ADD" />
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/add_category"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:src="@drawable/baseline_add_24"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        app:borderWidth="2dp"-->
+<!--        android:layout_margin="25dp"-->
+<!--        android:contentDescription="ADD" />-->
 </RelativeLayout>

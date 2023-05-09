@@ -24,8 +24,8 @@
 <!--            android:id="@+id/action_itemListFragment_to_categoryListFragment"-->
 <!--            app:destination="@id/categoryListFragment" />-->
         <argument
-            android:name="CategoryName"
-            app:argType="string" />
+            android:name="categoryID"
+            app:argType="string"/>
     </fragment>
 
     <activity

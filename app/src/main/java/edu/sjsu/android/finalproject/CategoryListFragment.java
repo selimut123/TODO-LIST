@@ -3,6 +3,7 @@ package edu.sjsu.android.finalproject;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 public class CategoryListFragment extends Fragment {
     ArrayList<String> categories = new ArrayList<>();
+    ArrayList<String> cat_id = new ArrayList<>();
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
 
@@ -41,7 +43,21 @@ public class CategoryListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // TODO : Get categories from database
         categories = new ArrayList<>();
-        for (int i=0; i<25; i++) { categories.add("Category " + i); }
+        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, null, null, null)){
+            if(c.moveToFirst()){
+                do{
+                    int nameID = c.getColumnIndex("category");
+                    String name = c.getString(nameID);
+
+                    int catid = c.getColumnIndex("_id");
+                    String cat = c.getString(catid);
+
+                    categories.add(name);
+                    cat_id.add(cat);
+                }while(c.moveToNext());
+            }
+        }
+//        for (int i=0; i<25; i++) { categories.add("Category " + i); }
     }
 
     @Override
@@ -51,10 +67,6 @@ public class CategoryListFragment extends Fragment {
 
         if(view instanceof RelativeLayout){
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.categoryList);
-
-            FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.add_category);
-            fab.setOnClickListener(this::openDialog);
-
             recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
             CategoryListAdapter adapter = new CategoryListAdapter(categories, CategoryListFragment.this);
             recyclerView.setAdapter(adapter);
@@ -66,7 +78,9 @@ public class CategoryListFragment extends Fragment {
     public void onClick(int position) {
         Log.d("CategoryListFragment", "TOUCHED");
         NavController controller = NavHostFragment.findNavController(this);
-        controller.navigate(R.id.action_categoryListFragment_to_itemListFragment);
+        Bundle bundle = new Bundle();
+        bundle.putString("categoryID", cat_id.get(position));
+        controller.navigate(R.id.action_categoryListFragment_to_itemListFragment, bundle);
     }
 
     public void openDialog(View view){
