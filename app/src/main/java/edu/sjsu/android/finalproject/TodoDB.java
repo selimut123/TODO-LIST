@@ -109,6 +109,12 @@ public class TodoDB extends SQLiteOpenHelper {
         return database.update(TABLE_NAME2, val,"_id == " + cat_id.trim(),null);
     }
 
+    public int deleteCategory(String cat_id){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("Todocategory", "category_id == " + cat_id.trim(), null);
+        return db.delete(TABLE_NAME2, "_id == " + cat_id.trim(), null);
+    }
+
 //    public Cursor getTodo(){
 //        SQLiteDatabase db = getWritableDatabase();
 //        return db.rawQuery("SELECT * FROM Todo JOIN Todocategory ON Todo.id == Todocategory.id ORDER BY Todo.id", null);

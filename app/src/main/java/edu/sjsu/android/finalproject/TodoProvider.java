@@ -54,7 +54,7 @@ public class TodoProvider extends ContentProvider {
                 return db.getAllCat(sortOrder);
             case TODOLEN:
                 return db.getTodoLength(selection);
-            default: throw new SQLException("Failed to add a record into " + uri);
+            default: throw new SQLException("Failed to read record on " + uri);
         }
     }
 
@@ -84,8 +84,11 @@ public class TodoProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        //return db.deleteAll();
-        throw new UnsupportedOperationException("Not yet implemented");
+        switch (uriMatcher.match(uri)){
+            case CATEGORY:
+                return db.deleteCategory(selection);
+            default: throw new SQLException("Failed to delete a record into " + uri);
+        }
     }
 
     //don't need to implement

@@ -61,9 +61,6 @@ public class IndividualItemAdapter extends ArrayAdapter<IndividualItem.ItemState
 
         if (position == 0) {
             holder.mCheckBox.setVisibility(View.INVISIBLE);
-        } else if (position == this.listState.size() - 1) {
-            // add a new category
-            holder.mCheckBox.setVisibility(View.INVISIBLE);
         } else {
             holder.mCheckBox.setVisibility(View.VISIBLE);
         }

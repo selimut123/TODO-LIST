@@ -50,13 +50,13 @@ public class ItemListFragment extends Fragment {
             }
         }
         assert getArguments() != null;
-        Log.d("testing1", "" + getArguments().getString("categoryID"));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+        view.findViewById(R.id.itemFAB).setOnClickListener(v->addTask());
 
         // Set the adapter
         if (view instanceof RelativeLayout) {
@@ -68,8 +68,13 @@ public class ItemListFragment extends Fragment {
         return view;
     }
 
+    public void addTask(){
+        Log.d("FAB", "TOUCHED");
+        new IndividualItem().addDialog(getContext(), this);
+    }
+
     public void onClick(int position) {
         Log.d("ItemListFragment", "TOUCHED");
-        new IndividualItem().showDialog(position, getContext(), tasks, this);
+        new IndividualItem().editDialog(position, getContext(), tasks, this);
     }
 }

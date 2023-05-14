@@ -2,29 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/md_margin">
+    android:id="@+id/linearLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/md_margin"
+    android:layout_centerInParent="true" >
 
-    <TextView
-        android:id="@+id/cat_add_modal_cat_name_text"
+    <ImageView
+        android:id="@+id/category_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sm_margin"
-        android:text="Name"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sm_text"
+        android:src="@mipmap/ic_launcher_round"
+        android:minHeight="64dp"
+        android:minWidth="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/cat_add_modal_cat_name"
+        android:id="@+id/category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="ex: work"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:hint="ex: pay bills"
+        android:textColor="@color/black"
         android:inputType="text"
         android:textSize="@dimen/sm_text"
-        app:layout_constraintBottom_toBottomOf="@+id/cat_add_modal_cat_name_text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cat_add_modal_cat_name_text" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

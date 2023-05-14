@@ -32,4 +32,7 @@
         android:id="@+id/mainActivity"
         android:name="edu.sjsu.android.finalproject.MainActivity"
         android:label="MainActivity" />
+
+    <action android:id="@+id/action_global_categoryListFragment2" app:destination="@id/categoryListFragment"/>
+    <action android:id="@+id/action_global_listFragment" app:destination="@id/itemListFragment"/>
 </navigation>

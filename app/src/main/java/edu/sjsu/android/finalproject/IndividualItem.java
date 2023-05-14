@@ -1,26 +1,36 @@
 package edu.sjsu.android.finalproject;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class IndividualItem {
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
-    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/TODO");
-    public void showDialog(int position, Context context, ArrayList<TodoItem> tasks, ItemListFragment itemListFragment) {
+    private final Uri CONTENT_URI_TODO = Uri.parse("content://" + AUTHORITY + "/TODO");
+    private final Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
+
+    private LocalDate newDate;
+    public void editDialog(int position, Context context, ArrayList<TodoItem> tasks, ItemListFragment itemListFragment) {
         //Alert
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -42,35 +52,13 @@ public class IndividualItem {
         inDate.setText(task.getDate());
         inDate.setOnClickListener(v -> changeDate(context, inDate));
 
-        // Set Category
-        /* TODO :
-              Replace temporary with Database
-              Save categories into Database
-          */
-//        String[] tempCategories = {
-//                "Select Category",
-//                "Category1", "Category2", "Category3", "Category4", "Category5",
-//                "Category6", "Category7", "Category8", "Category9", "Category10",
-//        };
-//        ArrayList<ItemState> listItems = new ArrayList<>();
-//        for (String s:tempCategories) {
-//            ItemState iS = new ItemState();
-//            iS.setCategory(s);
-//            iS.setSelected(false);
-//            listItems.add(iS);
-//        }
-//        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
-//        Spinner spinner = (Spinner)popup.findViewById(R.id.in_category);
-//        spinner.setAdapter(individualItemAdapter);
-
-        // Misc
         builder.setView(popup);
         builder.setPositiveButton("Save", (dialog, id) -> {
             ContentValues val = new ContentValues();
             val.put("name", ((TextView)popup.findViewById(R.id.in_name)).getText().toString());
             val.put("date", inDate.getText().toString());
 
-            if (context.getContentResolver().update(CONTENT_URI, val, task.getId(), null) > 0){
+            if (context.getContentResolver().update(CONTENT_URI_TODO, val, task.getId(), null) > 0){
                 Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
                 itemListFragment.getActivity().finish();
 
@@ -85,6 +73,76 @@ public class IndividualItem {
         builder.create().show();
     }
 
+    public void addDialog(Context context, ItemListFragment itemListFragment){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View popup = inflater.inflate(R.layout.item_add_popup, null);
+
+        TextView inDate = ((TextView)popup.findViewById(R.id.item_add_modal_date));
+        inDate.setOnClickListener(v -> changeDate(context, inDate));
+        Spinner spinner = (Spinner)popup.findViewById(R.id.item_add_modal_category_spinner);
+        ArrayList<IndividualItem.ItemState> listItems = new ArrayList<>();
+
+        IndividualItem.ItemState iS = new IndividualItem.ItemState();
+        iS.setCategory("Select Category");
+        iS.setSelected(false);
+        listItems.add(iS);
+        try(Cursor c = context.getContentResolver().query(CONTENT_URI_CAT, null, null, null, null)){
+            if(c.moveToFirst()){
+                do{
+                    int catid = c.getColumnIndex("category");
+                    String cat = c.getString(catid);
+
+                    int cat_id = c.getColumnIndex("_id");
+                    String id = c.getString(cat_id);
+
+                    iS = new IndividualItem.ItemState();
+                    iS.setId(id);
+                    iS.setCategory(cat);
+                    iS.setSelected(false);
+                    listItems.add(iS);
+
+                }while(c.moveToNext());
+            }
+        }
+
+        builder.setTitle(R.string.add_popup_title);
+        builder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
+            newDate = null;
+            dialogInterface.dismiss();
+        }));
+        builder.setPositiveButton("Add", (dialog, id) ->{
+
+            String new_item_name = ((EditText)popup.findViewById(R.id.item_add_modal_item_name)).getText().toString();
+            ContentValues val = new ContentValues();
+            val.put("name", new_item_name);
+            val.put("date", inDate.getText().toString());
+
+            ArrayList<String> selected_cats = new ArrayList<>();
+            for(IndividualItem.ItemState i: listItems){
+                if(i.isSelected()){
+                    selected_cats.add(i.getId());
+                }
+            }
+
+            TodoDB.cat = selected_cats;
+            // update Database
+            if (context.getContentResolver().insert(CONTENT_URI_TODO, val) != null){
+                Toast.makeText(context, "Task Added", Toast.LENGTH_SHORT).show();
+                itemListFragment.getActivity().finish();
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+                itemListFragment.getActivity().startActivity(itemListFragment.getActivity().getIntent());
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+            }
+
+        });
+
+        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
+        spinner.setAdapter(individualItemAdapter);
+        builder.setView(popup);
+        builder.create().show();
+    }
+
     private void changeDate(Context context, TextView textView) {
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR); // current year
@@ -93,9 +151,11 @@ public class IndividualItem {
 
         // date picker dialog
         DatePickerDialog dpDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+            @SuppressLint("NewApi")
             @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-                 textView.setText(i + "/" + (i1 + 1) + "/" + i2);
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                textView.setText(year + "/" + (month + 1) + "/" + day);
+                newDate = LocalDate.of(year, month + 1, day);
             }
         }, mYear, mMonth, mDay);
         dpDialog.show();

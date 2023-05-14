@@ -13,7 +13,6 @@
         android:id="@+id/category_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:src="@mipmap/ic_launcher_round"
         android:minHeight="64dp"
         android:minWidth="64dp"
@@ -26,11 +25,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:hint="ex: pay bills"
+        android:textColor="@color/black"
         android:inputType="text"
         android:textSize="@dimen/sm_text"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/category_image"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

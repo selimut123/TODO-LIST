@@ -72,16 +72,4 @@
         app:layout_constraintStart_toStartOf="@+id/item_add_modal_category_text"
         app:layout_constraintTop_toBottomOf="@+id/item_add_modal_category_text" />
 
-
-    <!--    <Button-->
-    <!--        android:id="@+id/cat_add_modal_add"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="Add" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/cat_add_modal_cancel"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="Cancel" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

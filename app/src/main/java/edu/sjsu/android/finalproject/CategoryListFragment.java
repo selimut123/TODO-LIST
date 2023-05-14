@@ -29,10 +29,12 @@ import java.util.ArrayList;
 
 
 public class CategoryListFragment extends Fragment {
-    ArrayList<CategoryItem> categories = new ArrayList<>();
+    static ArrayList<CategoryItem> categories = new ArrayList<>();
+
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
-    private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
-    private final Uri CONTENT_URI2 = Uri.parse("content://" + AUTHORITY + "/TODOLEN");
+    private final Uri CONTENT_URI_TODO = Uri.parse("content://" + AUTHORITY + "/TODO");
+    private final Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
+    private final Uri CONTENT_URI_CATLEN = Uri.parse("content://" + AUTHORITY + "/TODOLEN");
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,7 +47,7 @@ public class CategoryListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // TODO : Get categories from database
         categories = new ArrayList<>();
-        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, null, null, null)){
+        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_CAT, null, null, null, null)){
             if(c.moveToFirst()){
                 do{
                     int nameID = c.getColumnIndex("category");
@@ -55,7 +57,7 @@ public class CategoryListFragment extends Fragment {
                     String cat = c.getString(catid);
 
                     String len = "0";
-                    try(Cursor c2 = getContext().getContentResolver().query(CONTENT_URI2, null, cat, null, null)) {
+                    try(Cursor c2 = getContext().getContentResolver().query(CONTENT_URI_CATLEN, null, cat, null, null)) {
                         if (c2.moveToFirst()) {
                             int lenid = c2.getColumnIndex("len");
                             len = c2.getString(lenid);
@@ -74,6 +76,14 @@ public class CategoryListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category_list, container, false);
+        view.findViewById(R.id.categoryFAB).setOnClickListener(v->openDialog());
+
+        final View global = view.findViewById(R.id.ALLTODO);
+
+        ImageView iView = global.findViewById(R.id.ALL_image);
+        iView.setImageResource(R.mipmap.ic_launcher_round);
+
+        ((TextView) global.findViewById(R.id.ALL_category)).setText("ALL CATEGORIES");
 
         if(view instanceof RelativeLayout){
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.categoryList);
@@ -94,35 +104,49 @@ public class CategoryListFragment extends Fragment {
         controller.navigate(R.id.action_categoryListFragment_to_itemListFragment, bundle);
     }
 
-//    public void openDialog(View view){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-//        final View popup = inflater.inflate(R.layout.category_popup, null);
-//
-//        // Set Name
-//        /* TODO :
-//              Save name into Database
-//          */
-//        ((TextView)popup.findViewById(R.id.in_category)).setText("");
-//
-//        builder.setView(popup);
-//        builder.setPositiveButton("Save", (dialog, id) -> {
-//
-//            ContentValues val = new ContentValues();
-//            val.put("category", ((TextView)popup.findViewById(R.id.in_category)).getText().toString());
-//            if (getContext().getContentResolver().insert(CONTENT_URI, val) != null)
-//                Toast.makeText(getContext(), "Category Added", Toast.LENGTH_SHORT).show();
-//        });
-//        builder.setNegativeButton("Cancel", (dialog, id) -> {
-//            // When user selects no, do nothing
-//        });
-//        builder.create().show();
-//    }
+    public void openDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View popup = inflater.inflate(R.layout.category_add_popup, null);
+
+        // Set Name
+        /* TODO :
+              Save name into Database
+          */
+        ImageView iView = (ImageView)popup.findViewById(R.id.category_image);
+        iView.setImageResource(R.mipmap.ic_launcher_round);
+        iView.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Changing Image", Toast.LENGTH_SHORT).show();
+        });
+
+        // Set Category
+        // TODO : Get Category name from Database or onClick
+        ((EditText)popup.findViewById(R.id.category_name)).setText("");
+
+        builder.setView(popup);
+        builder.setPositiveButton("Save", (dialog, id) -> {
+            //todo: add new category to db and to the spinner
+            String new_cat_name = ((EditText)popup.findViewById(R.id.category_name)).getText().toString();
+            ContentValues val = new ContentValues();
+            val.put("category", new_cat_name);
+
+            if (getContext().getContentResolver().insert(CONTENT_URI_CAT, val) != null){
+                Toast.makeText(getContext(), "Category Added", Toast.LENGTH_SHORT).show();
+                this.getActivity().finish();
+                this.getActivity().overridePendingTransition(0,0);
+                startActivity(this.getActivity().getIntent());
+                this.getActivity().overridePendingTransition(0,0);
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, id) -> {
+            // When user selects no, do nothing
+        });
+        builder.create().show();
+    }
 
     public void onHold(int position) {
         Log.d("CategoryListFragment", "HOLD");
         showEditDialog(position);
-        //Toast.makeText(getContext(), "Long Hold", Toast.LENGTH_SHORT).show();
     }
 
     public void showEditDialog(int position) {
@@ -147,6 +171,14 @@ public class CategoryListFragment extends Fragment {
         // Buttons
         builder.setNeutralButton("Delete", (dialog, id) -> {
             // TODO : Ask for confirmation ; remove from database
+            if(getContext().getContentResolver().delete(CONTENT_URI_CAT, category.getId(), null) > 0){
+                Toast.makeText(getContext(), "Category Deleted", Toast.LENGTH_SHORT).show();
+                this.getActivity().finish();
+
+                this.getActivity().overridePendingTransition(0,0);
+                this.getActivity().startActivity(this.getActivity().getIntent());
+                this.getActivity().overridePendingTransition(0,0);
+            }
         });
         builder.setNegativeButton("Cancel", (dialog, id) -> {
             // When user selects, do nothing
@@ -156,7 +188,7 @@ public class CategoryListFragment extends Fragment {
             ContentValues val = new ContentValues();
             val.put("category", ((TextView)popup.findViewById(R.id.category_name)).getText().toString());
 
-            if (getContext().getContentResolver().update(CONTENT_URI, val, category.getId(), null) > 0){
+            if (getContext().getContentResolver().update(CONTENT_URI_CAT, val, category.getId(), null) > 0){
                 Toast.makeText(getContext(), "Category Updated", Toast.LENGTH_SHORT).show();
                 this.getActivity().finish();
 

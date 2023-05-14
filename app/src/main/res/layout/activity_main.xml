@@ -20,20 +20,19 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav"
-            android:tag="testing"
             tools:context=".MainActivity" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_FAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:src="@drawable/baseline_add_24"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            app:borderWidth="2dp"
-            android:layout_margin="25dp"
-            android:contentDescription="ADD" />
+        <!--
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/add_FAB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/baseline_add_24"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    app:borderWidth="2dp"
+                    android:layout_margin="25dp"
+                    android:contentDescription="ADD" /> -->
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -42,5 +41,5 @@
         android:layout_height="match_parent"
         app:menu="@menu/drawer_menu"
         android:layout_gravity="start"
-    />
+        />
 </androidx.drawerlayout.widget.DrawerLayout>
