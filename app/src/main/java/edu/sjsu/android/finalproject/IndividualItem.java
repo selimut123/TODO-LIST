@@ -28,6 +28,8 @@ public class IndividualItem {
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI_TODO = Uri.parse("content://" + AUTHORITY + "/TODO");
     private final Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
+    private final Uri CONTENT_URI_TODO_CATID = Uri.parse("content://" + AUTHORITY + "/TODO_CATID");
+    private final Uri CONTENT_URI_ALLTODO = Uri.parse("content://" + AUTHORITY + "/ALLTODO");
 
     private LocalDate newDate;
     public void editDialog(int position, Context context, ArrayList<TodoItem> tasks, ItemListFragment itemListFragment) {
@@ -41,22 +43,96 @@ public class IndividualItem {
         /* TODO :
               Save name into Database
           */
-        ((TextView)popup.findViewById(R.id.in_name)).setText(task.getName());
+        ((TextView)popup.findViewById(R.id.item_add_modal_item_name)).setText(task.getName());
 
         // Set Date
         /* TODO :
               Set an intial date
               Save date into Database
           */
-        TextView inDate = ((TextView)popup.findViewById(R.id.in_date));
+        TextView inDate = ((TextView)popup.findViewById(R.id.item_add_modal_date));
         inDate.setText(task.getDate());
         inDate.setOnClickListener(v -> changeDate(context, inDate));
 
-        builder.setView(popup);
+        Spinner spinner = (Spinner)popup.findViewById(R.id.item_add_modal_category_spinner);
+        ArrayList<IndividualItem.ItemState> listItems = new ArrayList<>();
+
+        IndividualItem.ItemState iS = new IndividualItem.ItemState();
+        iS.setCategory("Select Category");
+        iS.setSelected(false);
+        listItems.add(iS);
+        try(Cursor c = context.getContentResolver().query(CONTENT_URI_CAT, null, null, null, null)){
+            if(c.moveToFirst()){
+                do{
+                    int catid = c.getColumnIndex("category");
+                    String cat = c.getString(catid);
+
+                    int cat_id = c.getColumnIndex("_id");
+                    String id = c.getString(cat_id);
+
+                    iS = new IndividualItem.ItemState();
+                    iS.setId(id);
+                    iS.setCategory(cat);
+                    iS.setSelected(false);
+
+                    try(Cursor c2 = context.getContentResolver().query(CONTENT_URI_TODO_CATID, null, task.getId(), null, null)){
+                        if(c2.moveToFirst()){
+                            do{
+                                int check_catid = c2.getColumnIndex("category_id");
+                                String check_cat = c2.getString(check_catid);
+
+                                if(id.equals(check_cat)){
+                                    iS.setSelected(true);
+                                }
+                            }while(c2.moveToNext());
+                        }
+                    }
+
+                    listItems.add(iS);
+
+                }while(c.moveToNext());
+            }
+        }
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(itemListFragment.getContext());
+        final View popup2 = inflater.inflate(R.layout.validation_alert, null);
+        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! TODO can't have the same name as others, and make sure you pick a categories!");
+
+        builder2.setView(popup2);
+        builder2.setPositiveButton("Ok", (dialog,id) -> {
+
+        });
+        AlertDialog valid = builder2.create();
+
         builder.setPositiveButton("Save", (dialog, id) -> {
             ContentValues val = new ContentValues();
-            val.put("name", ((TextView)popup.findViewById(R.id.in_name)).getText().toString());
-            val.put("date", inDate.getText().toString());
+            String edit_name = ((TextView)popup.findViewById(R.id.item_add_modal_item_name)).getText().toString();
+            val.put("name", edit_name);
+            val.put("date", ((TextView)popup.findViewById(R.id.item_add_modal_date)).getText().toString());
+
+            ArrayList<String> selected_cats = new ArrayList<>();
+            for(IndividualItem.ItemState i: listItems){
+                if(i.isSelected()){
+                    selected_cats.add(i.getId());
+                }
+            }
+
+            try(Cursor c = itemListFragment.getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+                if(c.moveToFirst()){
+                    do{
+                        int nameid = c.getColumnIndex("name");
+                        String name = c.getString(nameid);
+                        if(edit_name.equals(name) || validation(edit_name) || selected_cats.size() > 0){
+                            valid.show();
+                            builder.create().dismiss();
+                            return;
+                        }
+
+                    }while(c.moveToNext());
+                }
+            }
+
+            TodoDB.cat = selected_cats;
 
             if (context.getContentResolver().update(CONTENT_URI_TODO, val, task.getId(), null) > 0){
                 Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
@@ -70,6 +146,20 @@ public class IndividualItem {
         builder.setNegativeButton("Cancel", (dialog, id) -> {
             // When user selects no, do nothing
         });
+        builder.setNeutralButton("Delete", (dialog,id) -> {
+            if((context.getContentResolver().delete(CONTENT_URI_TODO, task.getId(), null) > 0)){
+                Toast.makeText(context, "TODO Deleted", Toast.LENGTH_SHORT).show();
+                itemListFragment.getActivity().finish();
+
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+                itemListFragment.getActivity().startActivity(itemListFragment.getActivity().getIntent());
+                itemListFragment.getActivity().overridePendingTransition(0,0);
+            }
+        });
+
+        IndividualItemAdapter individualItemAdapter = new IndividualItemAdapter(popup.getContext(), 0, listItems);
+        spinner.setAdapter(individualItemAdapter);
+        builder.setView(popup);
         builder.create().show();
     }
 
@@ -106,6 +196,16 @@ public class IndividualItem {
             }
         }
 
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(itemListFragment.getContext());
+        final View popup2 = inflater.inflate(R.layout.validation_alert, null);
+        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! TODO can't have the same name as others, and make sure you pick a categories!");
+
+        builder2.setView(popup2);
+        builder2.setPositiveButton("Ok", (dialog,id) -> {
+
+        });
+        AlertDialog valid = builder2.create();
+
         builder.setTitle(R.string.add_popup_title);
         builder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
             newDate = null;
@@ -114,6 +214,7 @@ public class IndividualItem {
         builder.setPositiveButton("Add", (dialog, id) ->{
 
             String new_item_name = ((EditText)popup.findViewById(R.id.item_add_modal_item_name)).getText().toString();
+
             ContentValues val = new ContentValues();
             val.put("name", new_item_name);
             val.put("date", inDate.getText().toString());
@@ -122,6 +223,21 @@ public class IndividualItem {
             for(IndividualItem.ItemState i: listItems){
                 if(i.isSelected()){
                     selected_cats.add(i.getId());
+                }
+            }
+
+            try(Cursor c = itemListFragment.getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+                if(c.moveToFirst()){
+                    do{
+                        int nameid = c.getColumnIndex("name");
+                        String name = c.getString(nameid);
+                        if(new_item_name.equals(name) || validation(new_item_name) || selected_cats.size() == 0){
+                            valid.show();
+                            builder.create().dismiss();
+                            return;
+                        }
+
+                    }while(c.moveToNext());
                 }
             }
 
@@ -159,6 +275,10 @@ public class IndividualItem {
             }
         }, mYear, mMonth, mDay);
         dpDialog.show();
+    }
+
+    public boolean validation(String str){
+        return (!str.matches("[\\w ]+")) || str.length() > 15;
     }
 
     public static class ItemState {

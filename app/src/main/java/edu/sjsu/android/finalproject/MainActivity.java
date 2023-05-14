@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI_TODO = Uri.parse("content://" + AUTHORITY + "/TODO");
     private final Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITY + "/CATEGORY");
-
-    private LocalDate newDate;
     DrawerLayout drawer;
     NavigationView navView;
     ActionBarDrawerToggle drawerToggle;
@@ -50,62 +48,103 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setUpDrawerNavigation();
+    }
+
+    private void setUpDrawerNavigation() {
+        // Set up UI
         drawer = findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.open, R.string.close);
         drawer.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navView = findViewById(R.id.drawer_nav);
 
-        Menu sub = addMenuItemInNavMenuDrawer();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_nav);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        // Set up onClick Navigation
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                int id = item.getItemId();
-                if(id == R.id.home){
-                    NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    assert navHostFragment != null;
-                    NavController controller = navHostFragment.getNavController();
-                    controller.navigate(R.id.action_global_categoryListFragment2);
-                }
-                else{
-                    NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    assert navHostFragment != null;
-                    NavController controller = navHostFragment.getNavController();
-                    int index = -1;
-                    Log.d("Test", String.valueOf(sub.size()));
-                    for (int i=0; i<sub.size(); i++) {
-                        if (sub.getItem(i).equals(item)) index = i; break;
+                switch(item.getItemId()){
+                    case (R.id.home):
+                    {
+                        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                        assert navHostFragment != null;
+                        NavController controller = navHostFragment.getNavController();
+                        controller.navigate(R.id.action_global_categoryListFragment2);
+                        drawer.closeDrawer(GravityCompat.START, true);
+                        break;
                     }
-                    Log.d("Test", String.valueOf(index));
-                    Bundle bundle = new Bundle();
-                    bundle.putString("categoryID", String.valueOf(index + 1));
-                    controller.navigate(R.id.action_global_listFragment, bundle);
+                    case (R.id.about):
+                    {
+                        Toast.makeText(MainActivity.this, "about", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    case (R.id.task_visibility):
+                    {
+                        switch (item.getTitle().toString()) {
+                            case ("All Tasks") : {
+                                item.setTitle("Incomplete Tasks");
+
+                                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                                assert navHostFragment != null;
+                                NavController controller = navHostFragment.getNavController();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("categoryID", "ALL");
+                                controller.navigate(R.id.action_global_listFragment, bundle);
+                                break;
+                            }
+                            case ("Incomplete Tasks"): {
+                                item.setTitle("Completed Tasks");
+
+                                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                                assert navHostFragment != null;
+                                NavController controller = navHostFragment.getNavController();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("categoryID", "INCOMPLETE");
+                                controller.navigate(R.id.action_global_listFragment, bundle);
+                                break;
+                            }
+                            case ("Completed Tasks"): {
+                                item.setTitle("All Tasks");
+                                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                                assert navHostFragment != null;
+                                NavController controller = navHostFragment.getNavController();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("categoryID", "COMPLETE");
+                                controller.navigate(R.id.action_global_listFragment, bundle);
+                            } break;
+                        }
+                        Toast.makeText(MainActivity.this, "task visibility", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    default : {
+                        // Get position of item in menu
+                        int index = item.getOrder();
+                        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                        assert navHostFragment != null;
+                        NavController controller = navHostFragment.getNavController();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("categoryID", String.valueOf(index));
+                        controller.navigate(R.id.action_global_listFragment, bundle);
+                        Toast.makeText(MainActivity.this, "clicked category : " + index, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 drawer.closeDrawers();
-                return true;
+                return false;
             }
         });
-
+        addMenuItemInNavMenuDrawer();
     }
 
-    private void changeDate(Context context, TextView textView) {
-        final Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR); // current year
-        int mMonth = c.get(Calendar.MONTH); // current month
-        int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+    private void addMenuItemInNavMenuDrawer(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_nav);
 
-        // date picker dialog
-        DatePickerDialog dpDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                textView.setText(year + "/" + (month + 1) + "/" + day);
-                newDate = LocalDate.of(year, month + 1, day);
-            }
-        }, mYear, mMonth, mDay);
-        dpDialog.show();
+        Menu menu = navigationView.getMenu();
+        Menu submenu = menu.addSubMenu("Categories");
+        for(CategoryItem item : CategoryListFragment.categories){
+            submenu.add(Menu.NONE, Menu.NONE, Integer.parseInt(item.getId()), item.getName());
+        }
+        navigationView.invalidate();
     }
 
     @Override
@@ -128,20 +167,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("test", "running");
     }
 
-    private Menu addMenuItemInNavMenuDrawer(){
-        NavigationView navigationView = (NavigationView) findViewById(R.id.drawer_nav);
-
-        Menu menu = navigationView.getMenu();
-        Menu submenu = menu.addSubMenu("Categories");
-
-        for (CategoryItem category : CategoryListFragment.categories){
-            submenu.add(category.getName());
-        }
-
-        navigationView.invalidate();
-
-        return submenu;
-    }
 }

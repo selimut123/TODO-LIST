@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/md_margin">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/base_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/md_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleIcon"/>
+
+    <TableLayout
+        android:id="@+id/icon_choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/md_margin"
+        app:layout_constraintTop_toBottomOf="@+id/base_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/color_choice">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/icon_home"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_home_foreground" />
+            <ImageView
+                android:id="@+id/icon_people"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_people_foreground" />
+            <ImageView
+                android:id="@+id/icon_work"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_work_foreground" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/icon_important"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_important_foreground" />
+            <ImageView
+                android:id="@+id/icon_star"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_star_foreground" />
+            <ImageView
+                android:id="@+id/icon_money"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_money_foreground" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/icon_calender"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_calender_foreground" />
+            <ImageView
+                android:id="@+id/icon_medical"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_medical_foreground" />
+            <ImageView
+                android:id="@+id/icon_misc"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@drawable/ic_misc_foreground" />
+        </TableRow>
+    </TableLayout>
+
+    <ToggleButton
+        android:id="@+id/toggle_icon_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sm_margin"
+        android:textOn="Edit Foreground"
+        android:textOff="Edit Background"
+        app:layout_constraintTop_toBottomOf="@+id/base_image"
+        app:layout_constraintStart_toEndOf="@id/icon_choice"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TableLayout
+        android:id="@+id/color_choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/md_margin"
+        app:layout_constraintTop_toBottomOf="@+id/toggle_icon_edit"
+        app:layout_constraintStart_toEndOf="@id/icon_choice"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/icon_white"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/white"
+                android:padding="1dp"
+                android:scaleType="centerCrop"
+                android:cropToPadding="true"
+                android:background="@color/black"/>
+            <ImageView
+                android:id="@+id/icon_red"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/red" />
+            <ImageView
+                android:id="@+id/icon_orange"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/orange" />
+            <ImageView
+                android:id="@+id/icon_yellow"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/yellow" />
+            <ImageView
+                android:id="@+id/icon_green"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/green" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/icon_teal"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/teal" />
+            <ImageView
+                android:id="@+id/icon_blue"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/blue" />
+            <ImageView
+                android:id="@+id/icon_purple"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/purple" />
+            <ImageView
+                android:id="@+id/icon_pink"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/pink" />
+            <ImageView
+                android:id="@+id/icon_black"
+                android:layout_width="@dimen/md_text"
+                android:layout_height="@dimen/md_text"
+                app:srcCompat="@color/black" />
+        </TableRow>
+    </TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,6 +36,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         TodoItem item = tasks.get(position);
         holder.task.setText(item.getName());
         holder.date.setText(item.getDate());
+        holder.done.setChecked(itemListFragment.preferences.getBoolean(item.getId(), false));
     }
 
     @Override
@@ -55,6 +56,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             date = (TextView) binding.findViewById(R.id.date);
             binding.setOnClickListener(v ->   {
                 itemListFragment.onClick(this.getAdapterPosition());
+            });
+            done.setOnClickListener(v -> {
+                itemListFragment.onCheckClick(this.getAdapterPosition(), done);
             });
         }
     }

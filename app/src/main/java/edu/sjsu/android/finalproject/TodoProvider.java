@@ -25,6 +25,12 @@ public class TodoProvider extends ContentProvider {
     private static final int CATEGORY_ID = 4;
     private static final int TODOLEN = 5;
     private static final int TODOLEN_ID = 6;
+    private static final int ALLTODO = 7;
+    private static final int ALLTODO_ID = 8;
+    private static final int ALLTODOLEN = 9;
+    private static final int ALLTODOLEN_ID = 10;
+    private static final int TODO_CATID = 11;
+    private static final int TODO_CATID_ID = 12;
     private static final UriMatcher uriMatcher;
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -34,6 +40,12 @@ public class TodoProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "CATEGORY/#", CATEGORY_ID);
         uriMatcher.addURI(AUTHORITY, "TODOLEN", TODOLEN);
         uriMatcher.addURI(AUTHORITY, "TODOLEN/#", TODOLEN_ID);
+        uriMatcher.addURI(AUTHORITY, "ALLTODO", ALLTODO);
+        uriMatcher.addURI(AUTHORITY, "ALLTODO/#", ALLTODO_ID);
+        uriMatcher.addURI(AUTHORITY, "ALLTODOLEN", ALLTODOLEN);
+        uriMatcher.addURI(AUTHORITY, "ALLTODOLEN/#", ALLTODOLEN_ID);
+        uriMatcher.addURI(AUTHORITY, "TODO_CATID", TODO_CATID);
+        uriMatcher.addURI(AUTHORITY, "TODO_CATID/#", TODO_CATID_ID);
     }
 
     @Override
@@ -54,6 +66,12 @@ public class TodoProvider extends ContentProvider {
                 return db.getAllCat(sortOrder);
             case TODOLEN:
                 return db.getTodoLength(selection);
+            case ALLTODO:
+                return db.getEveryTodo(sortOrder);
+            case ALLTODOLEN:
+                return db.getEveryTodoLength();
+            case TODO_CATID:
+                return db.getCatIDFromTodo(sortOrder, selection);
             default: throw new SQLException("Failed to read record on " + uri);
         }
     }
@@ -87,6 +105,8 @@ public class TodoProvider extends ContentProvider {
         switch (uriMatcher.match(uri)){
             case CATEGORY:
                 return db.deleteCategory(selection);
+            case TODO:
+                return db.deleteTodo(selection);
             default: throw new SQLException("Failed to delete a record into " + uri);
         }
     }

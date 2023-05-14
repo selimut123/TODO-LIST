@@ -9,7 +9,6 @@ public class TodoItem{
 
     private final String name;
     private final String date;
-
     private final String id;
 
     public TodoItem(String id, String name, String date) {

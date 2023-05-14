@@ -1,6 +1,7 @@
 package edu.sjsu.android.finalproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
@@ -23,6 +25,8 @@ public class ItemListFragment extends Fragment {
     ArrayList<TodoItem> tasks = new ArrayList<>();
     private final String AUTHORITY = "edu.sjsu.android.finalproject";
     private final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/TODO");
+    private final Uri CONTENT_URI_ALLTODO = Uri.parse("content://" + AUTHORITY + "/ALLTODO");
+    public SharedPreferences preferences;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -33,23 +37,53 @@ public class ItemListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = getContext().getSharedPreferences("CheckBox", Context.MODE_PRIVATE);
         // TODO : Get tasks from database
         tasks = new ArrayList<>();
-        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
-            if(c.moveToFirst()){
-                do{
-                    int id = c.getColumnIndex("_id");
-                    int nameid = c.getColumnIndex("name");
-                    int dateid = c.getColumnIndex("date");
-                    String name = c.getString(nameid);
-                    String date = c.getString(dateid);
-                    String todo_id = c.getString(id);
-
-                    tasks.add(new TodoItem(todo_id, name, date));
-                }while(c.moveToNext());
+        if(getArguments().getString("categoryID").equals("ALL")){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+                readTasks(c, "");
             }
+        } else if(getArguments().getString("categoryID").equals("INCOMPLETE")){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+                readTasks(c, "incomplete");
+            }
+        }else if(getArguments().getString("categoryID").equals("COMPLETE")){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+                readTasks(c, "complete");
+            }
+        }else{
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
+                readTasks(c, "");
+            }
+            assert getArguments() != null;
         }
-        assert getArguments() != null;
+    }
+
+    public void readTasks(Cursor c, String type){
+        if(c.moveToFirst()){
+            do{
+                int id = c.getColumnIndex("_id");
+                int nameid = c.getColumnIndex("name");
+                int dateid = c.getColumnIndex("date");
+                String name = c.getString(nameid);
+                String date = c.getString(dateid);
+                String todo_id = c.getString(id);
+
+                if(type.equals("complete")){
+                    if(preferences.getBoolean(todo_id, false)){
+                        tasks.add(new TodoItem(todo_id, name, date));
+                    }
+                }else if(type.equals("incomplete")){
+                    if(!preferences.getBoolean(todo_id, false)){
+                        tasks.add(new TodoItem(todo_id, name, date));
+                    }
+                }else{
+                    tasks.add(new TodoItem(todo_id, name, date));
+                }
+
+            }while(c.moveToNext());
+        }
     }
 
     @Override
@@ -76,5 +110,12 @@ public class ItemListFragment extends Fragment {
     public void onClick(int position) {
         Log.d("ItemListFragment", "TOUCHED");
         new IndividualItem().editDialog(position, getContext(), tasks, this);
+    }
+
+    public void onCheckClick(int position, CheckBox done){
+        TodoItem item = tasks.get(position);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(item.getId(), done.isChecked());
+        editor.apply();
     }
 }
