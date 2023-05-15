@@ -148,6 +148,7 @@ public class IndividualItem {
         });
         builder.setNeutralButton("Delete", (dialog,id) -> {
             if((context.getContentResolver().delete(CONTENT_URI_TODO, task.getId(), null) > 0)){
+                builder.create().dismiss();
                 Toast.makeText(context, "TODO Deleted", Toast.LENGTH_SHORT).show();
                 itemListFragment.getActivity().finish();
 
@@ -270,7 +271,7 @@ public class IndividualItem {
             @SuppressLint("NewApi")
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                textView.setText(year + "/" + (month + 1) + "/" + day);
+                textView.setText(year + "/" + ((month + 1 < 10) ? "0" + (month + 1) : (month + 1))+ "/" + ((day<10) ? "0"+day : day));
                 newDate = LocalDate.of(year, month + 1, day);
             }
         }, mYear, mMonth, mDay);

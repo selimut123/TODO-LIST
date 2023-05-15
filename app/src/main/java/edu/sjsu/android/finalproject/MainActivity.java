@@ -119,7 +119,11 @@ public class MainActivity extends AppCompatActivity {
                         assert navHostFragment != null;
                         NavController controller = navHostFragment.getNavController();
                         Bundle bundle = new Bundle();
-                        bundle.putString("categoryID", map.get(item.getTitle()));
+                        if(item.getTitle().equals("ALL TASKS")) {
+                            bundle.putString("categoryID", "ALL");
+                        }else {
+                            bundle.putString("categoryID", map.get(item.getTitle()));
+                        }
                         controller.navigate(R.id.action_global_listFragment, bundle);
                         drawer.closeDrawer(GravityCompat.START, true);
                     }
@@ -138,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < submenu.size(); i++){
             submenu.removeItem(i);
         }
+        submenu.add("ALL TASKS");
         ArrayList<CategoryItem> temp = CategoryListFragment.categories;
         Collections.sort(temp, Comparator.comparing(CategoryItem::getName));
         for(CategoryItem item : temp){

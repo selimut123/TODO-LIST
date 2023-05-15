@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,19 +42,19 @@ public class ItemListFragment extends Fragment {
         // TODO : Get tasks from database
         tasks = new ArrayList<>();
         if(getArguments().getString("categoryID").equals("ALL")){
-            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, "date")){
                 readTasks(c, MainActivity.task_type);
             }
         } else if(getArguments().getString("categoryID").equals("INCOMPLETE")){
-            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, "date")){
                 readTasks(c, "incomplete");
             }
         }else if(getArguments().getString("categoryID").equals("COMPLETE")){
-            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, "date")){
                 readTasks(c, "complete");
             }
         }else{
-            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
+            try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, "date")){
                 Log.d("test", MainActivity.task_type);
                 readTasks(c, MainActivity.task_type);
             }
@@ -92,7 +93,16 @@ public class ItemListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         view.findViewById(R.id.itemFAB).setOnClickListener(v->addTask());
-
+        String id = getArguments().getString("categoryID");
+        if(id.equals("ALL")){
+            ((TextView) view.findViewById(R.id.itemTitle)).setText("ALL TASKS LIST: ");
+        }else{
+            for(CategoryItem item : CategoryListFragment.categories){
+                if(item.getId().equals(id)){
+                    ((TextView) view.findViewById(R.id.itemTitle)).setText(item.getName() + " LIST: ");
+                }
+            }
+        }
         // Set the adapter
         if (view instanceof RelativeLayout) {
             RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.itemList);

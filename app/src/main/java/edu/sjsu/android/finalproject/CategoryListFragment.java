@@ -151,14 +151,14 @@ public class CategoryListFragment extends Fragment {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View popup = inflater.inflate(R.layout.category_add_popup, null);
 
-        ShapeableImageView iView = (ShapeableImageView)popup.findViewById(R.id.category_image);
-        iView.setBackgroundResource(R.color.teal);   // From Database
-        iView.setImageDrawable(getContext().getDrawable(R.drawable.ic_home_foreground)); // From Database
-        iView.setColorFilter(getContext().getColor(R.color.orange), PorterDuff.Mode.SRC_IN);
-
         imageID = R.drawable.ic_home_foreground;
-        colorID = R.color.orange;
-        backgroundColorID = R.color.teal;
+        colorID = R.color.white;
+        backgroundColorID = R.color.blue;
+
+        ShapeableImageView iView = (ShapeableImageView)popup.findViewById(R.id.category_image);
+        iView.setBackgroundResource(backgroundColorID);   // From Database
+        iView.setImageDrawable(getContext().getDrawable(imageID)); // From Database
+        iView.setColorFilter(getContext().getColor(colorID), PorterDuff.Mode.SRC_IN);
 
         iView.setOnClickListener(v -> {
             editImageDialog(getContext(), iView);
