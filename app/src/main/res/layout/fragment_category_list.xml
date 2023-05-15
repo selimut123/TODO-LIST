@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app1="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        xmlns:app="http://schemas.adroid.com/apk/res-auto"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:id="@+id/ALLTODO"
+        >
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ALL_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_launcher_background"
+            android:adjustViewBounds="true"
+            android:maxWidth="64dp"
+            android:maxHeight="64dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="Icon"
+            app1:shapeAppearance="@style/CircleIcon"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/ALL_category"
+                android:text="Categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginLeft="16dp"
+                android:textSize="25sp"/>
+            <TextView
+                android:id="@+id/ALL_tasks"
+                android:text="Tasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_marginLeft="16dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/categoryList"
+        android:name="edu.sjsu.android.finalproject.CategoryListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ALLTODO"
+        android:layout_marginBottom="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".CategoryListFragment"
+        tools:listitem="@layout/category_row" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/categoryFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/baseline_add_24"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:borderWidth="2dp"
+        android:layout_margin="25dp"
+        android:contentDescription="ADD" />
+</RelativeLayout>

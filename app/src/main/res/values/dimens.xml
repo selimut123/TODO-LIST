@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="list_margin">10dp</dimen>
+    <dimen name="lg_text">64sp</dimen>
+    <dimen name="md_text">32sp</dimen>
+    <dimen name="sm_text">16sp</dimen>
+    <dimen name="lg_margin">64dp</dimen>
+    <dimen name="md_margin">32dp</dimen>
+    <dimen name="sm_margin">16dp</dimen>
+</resources>
