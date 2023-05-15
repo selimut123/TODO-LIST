@@ -30,6 +30,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
 
 
 public class CategoryListFragment extends Fragment {
@@ -55,7 +58,7 @@ public class CategoryListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // TODO : Get categories from database
         categories = new ArrayList<>();
-        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_CAT, null, null, null, null)){
+        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_CAT, null, null, null, "category")){
             if(c.moveToFirst()){
                 do{
                     int nameID = c.getColumnIndex("category");
@@ -65,7 +68,7 @@ public class CategoryListFragment extends Fragment {
                     String cat = c.getString(catid);
 
                     String len = "0";
-                    try(Cursor c2 = getContext().getContentResolver().query(CONTENT_URI_CATLEN, null, cat, null, null)) {
+                    try(Cursor c2 = getContext().getContentResolver().query(CONTENT_URI_CATLEN, null, cat, null, "category")) {
                         if (c2.moveToFirst()) {
                             int lenid = c2.getColumnIndex("len");
                             len = c2.getString(lenid);
@@ -94,13 +97,15 @@ public class CategoryListFragment extends Fragment {
 
         final View global = view.findViewById(R.id.ALLTODO);
 
-        ImageView iView = global.findViewById(R.id.ALL_image);
-        iView.setImageResource(R.mipmap.ic_launcher_round);
+        ShapeableImageView iView = global.findViewById(R.id.ALL_image);
+        iView.setBackgroundResource(R.color.blue);
+        iView.setImageResource(R.drawable.ic_important_foreground);
+        iView.setColorFilter(getContext().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
 
         ((TextView) global.findViewById(R.id.ALL_category)).setText("ALL TASKS");
 
         String len = "0";
-        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODOLEN, null, null, null, null)){
+        try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODOLEN, null, null, null, "category")){
             if(c.moveToFirst()){
                 do{
                     int id = c.getColumnIndex("len");
@@ -163,7 +168,7 @@ public class CategoryListFragment extends Fragment {
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext());
         final View popup2 = inflater.inflate(R.layout.validation_alert, null);
-        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! Categories can't have the same name as others");
+        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! Categories can't have the same name as others and Length should be less than 15 characters");
 
         builder2.setView(popup2);
         builder2.setPositiveButton("Ok", (dialog,id) -> {
@@ -176,7 +181,7 @@ public class CategoryListFragment extends Fragment {
             //todo: add new category to db and to the spinner
             String new_cat_name = ((EditText)popup.findViewById(R.id.category_name)).getText().toString();
             for(CategoryItem item : categories){
-                if(item.getName().equals(new_cat_name) || validation(new_cat_name)){
+                if(item.getName().equals(new_cat_name) || validation(new_cat_name) || new_cat_name.toUpperCase().equals("ALL TASKS")){
                     valid.show();
                     builder.create().dismiss();
                     return;
@@ -220,10 +225,17 @@ public class CategoryListFragment extends Fragment {
         // Set Image
         /* TODO : Get image from Database and External Storage ;
                   Remove images from storage when no categories use them */
-        ImageView iView = (ImageView)popup.findViewById(R.id.category_image);
-        iView.setImageResource(R.mipmap.ic_launcher_round);
+        ShapeableImageView iView = (ShapeableImageView)popup.findViewById(R.id.category_image);
+        iView.setBackgroundResource(category.getBackgroundImageID());   // From Database
+        iView.setImageDrawable(getContext().getDrawable(category.getImageID())); // From Database
+        iView.setColorFilter(getContext().getColor(category.getColorID()), PorterDuff.Mode.SRC_IN);
+
+        imageID = category.getImageID();
+        colorID = category.getColorID();
+        backgroundColorID = category.getBackgroundImageID();
+
         iView.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Changing Image", Toast.LENGTH_SHORT).show();
+            editImageDialog(getContext(), iView);
         });
 
         // Set Category
@@ -232,7 +244,7 @@ public class CategoryListFragment extends Fragment {
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext());
         final View popup2 = inflater.inflate(R.layout.validation_alert, null);
-        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! Categories can't have the same name as others");
+        ((TextView)popup2.findViewById(R.id.validation_text)).setText("Please enter the correct Input! Categories can't have the same name as others and Length should be less than 15 characters");
 
         builder2.setView(popup2);
         builder2.setPositiveButton("Ok", (dialog,id) -> {
@@ -267,6 +279,9 @@ public class CategoryListFragment extends Fragment {
                 }
             }
             ContentValues val = new ContentValues();
+            val.put("image", imageID);
+            val.put("color", colorID);
+            val.put("backgroundcolor", backgroundColorID);
             val.put("category", cat);
 
             if (getContext().getContentResolver().update(CONTENT_URI_CAT, val, category.getId(), null) > 0){

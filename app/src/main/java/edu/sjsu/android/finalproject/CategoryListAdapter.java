@@ -35,10 +35,8 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         // TODO : get this data from database
         CategoryItem item = categories.get(position);
         holder.image.setBackgroundResource(item.getBackgroundImageID());   // From Database
-        Log.d("id1", item.getImageID() + "");
-        Log.d("id2", R.drawable.ic_home_foreground + "");
         holder.image.setImageDrawable(categoryListFragment.getContext().getDrawable(item.getImageID())); // From Database
-//        holder.image.setColorFilter(categoryListFragment.getContext().getColor(item.getColorID()), PorterDuff.Mode.SRC_IN);
+        holder.image.setColorFilter(categoryListFragment.getContext().getColor(item.getColorID()), PorterDuff.Mode.SRC_IN);
         holder.name.setText(item.getName());
         holder.tasks.setText(item.getLength() + " tasks");
     }

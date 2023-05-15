@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app1="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
     xmlns:app="http://schemas.adroid.com/apk/res-auto"
     android:orientation="horizontal">
@@ -15,7 +16,8 @@
         android:maxWidth="64dp"
         android:maxHeight="64dp"
         android:scaleType="fitCenter"
-        android:contentDescription="Icon" />
+        android:contentDescription="Icon"
+        app1:shapeAppearance="@style/CircleIcon"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

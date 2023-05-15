@@ -42,7 +42,7 @@ public class ItemListFragment extends Fragment {
         tasks = new ArrayList<>();
         if(getArguments().getString("categoryID").equals("ALL")){
             try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
-                readTasks(c, "");
+                readTasks(c, MainActivity.task_type);
             }
         } else if(getArguments().getString("categoryID").equals("INCOMPLETE")){
             try(Cursor c = getContext().getContentResolver().query(CONTENT_URI_ALLTODO, null, null, null, null)){
@@ -54,7 +54,8 @@ public class ItemListFragment extends Fragment {
             }
         }else{
             try(Cursor c = getContext().getContentResolver().query(CONTENT_URI, null, getArguments().getString("categoryID"), null, null)){
-                readTasks(c, "");
+                Log.d("test", MainActivity.task_type);
+                readTasks(c, MainActivity.task_type);
             }
             assert getArguments() != null;
         }
