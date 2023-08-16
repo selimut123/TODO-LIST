@@ -3,9 +3,9 @@
 
 
 # USER GUIDE ---
-&emsp; This app is meant to help users organize their tasks into categories, and mark them when done. Tasks can be added to multiple categories if needed. When marked complete, tasks aren’t deleted, but can be filtered out and not shown.
+This app is meant to help users organize their tasks into categories, and mark them when done. Tasks can be added to multiple categories if needed. When marked complete, tasks aren’t deleted, but can be filtered out and not shown.
 
-&emsp; Categories cannot have the same name, and must be a string of alphanumeric characters less than 15 characters long. The same goes for each task. There is no limit to how many tasks and categories are added.
+Categories cannot have the same name, and must be a string of alphanumeric characters less than 15 characters long. The same goes for each task. There is no limit to how many tasks and categories are added.
 
 
 # CATEGORIES ---
@@ -18,9 +18,9 @@ Editing Category : <br/>
 
 When on a screen showing a list of categories, long hold on one of the categories to edit it. A popup will appear, allowing you to change its name and image. Click ‘Save’ to add it to the app.
 
+Delete Category : <br/>
 
-# Delete Category :
-&emsp; When on a screen showing a list of categories, long hold on one of the categories to edit it. A popup will appear, with an option to delete the task. Note that there is no confirmation for this. Tasks will automatically be removed from this category.
+When on a screen showing a list of categories, long hold on one of the categories to edit it. A popup will appear, with an option to delete the task. Note that there is no confirmation for this. Tasks will automatically be removed from this category.
 
 Changing Category Icon :
 
