@@ -1,7 +1,7 @@
 # TODO-LIST APPLICATION: Neat
  An application that helps you organize and keep track of various tasks that you need to do. Built-in Android Studio Framework using XML language for front-end and Java language for back-end.
 
-![](Image/...Neat_1.jpg) | ![](Image/...Neat_2.jpg)
+![](Image/Neat_1_new.jpg)         ![](Image/Neat_3_new.jpg)
 
 # USER GUIDE ---
 This app is meant to help users organize their tasks into categories, and mark them when done. Tasks can be added to multiple categories if needed. When marked complete, tasks aren’t deleted but can be filtered out and not shown.
